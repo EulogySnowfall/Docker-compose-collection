@@ -1,0 +1,10 @@
+.vscode/
+**/private/
+**/logs/
+**/db-data/
+.env
+**/connector/
+coralogix-exemple/
+**/*.sql
+**/db-data/*
+

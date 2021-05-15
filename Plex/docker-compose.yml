@@ -1,0 +1,29 @@
+version: '3.7'
+
+services:
+  plex:
+    container_name: plex
+    image: "plexinc/pms-docker:${TAG}"
+    restart: unless-stopped
+    environment:
+      - TZ='America/Toronto'
+      - PLEX_CLAIM=claim-p8a7zZrBvP4ui6j4P4XM
+      - ADVERTISE_IP=http://home.guidetutoriel.com:32400/  
+    volumes:
+      - config:/config
+      - transcode:/transcode
+      - ${DATAPATH}:/data
+    mac_address: ${MAC}
+    networks:
+      # Network name of the macvlan to use 
+      mexique_docker:
+        ipv4_address: ${PRIVATEIP}
+
+volumes:
+  transcode:
+  config:
+
+networks:
+  mexique_docker:
+    # Tell the macvlan already created
+    external: true

@@ -1,0 +1,63 @@
+version: '3.7'
+
+services:
+  db:
+    image: mariadb:latest
+    restart: always
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    volumes:
+      - database:/var/lib/mysql
+      - ${DATABASEBACKUPPATH}:/var/lib/backup
+    networks:
+      - default
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DB=${MYSQL_DB}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+
+  app:
+    image: nextcloud:latest
+    restart: always
+
+    volumes:
+      - www:/var/www/html
+      - ${LOCALDATAPATH}:${NEXTCLOUD_DATA_DIR}
+
+    depends_on:
+      - db
+    environment:
+      - NEXTCLOUD_UPDATE=0
+      - NEXTCLOUD_DATA_DIR=${NEXTCLOUD_DATA_DIR}
+      - NEXTCLOUD_TRUSTED_DOMAINS=${NEXTCLOUD_TRUSTED_DOMAINS}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DB=${MYSQL_DB}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_HOST=db
+
+    networks:
+      - default
+
+  web:
+    image: nginx:latest
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ${CONFIGPATH}:/etc/nginx:ro
+      - ${SSLPATH}/${MAINDOMAIN}:/etc/ssl/private:ro
+      - ${LOGPATH}/access.log:/var/log/nginx/access.log
+      - ${LOGPATH}/error.log:/var/log/nginx/error.log
+    
+    depends_on:
+      - app
+
+
+networks:
+  default:
+
+volumes:
+  www:
+  database:
+

@@ -1,0 +1,72 @@
+version: '3.7'
+
+services:
+  db:
+    image: mariadb:latest
+    restart: always
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    volumes:
+      - db_nextcloud:/var/lib/mysql
+      - ${DATABASEBACKUPPATH}:/var/lib/backup
+    networks:
+      default:
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DB=${MYSQL_DB}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+
+  app:
+    image: nextcloud:latest
+    restart: always
+
+    volumes:
+      - www:/var/www/html
+      - ${LOCALDATAPATH}:${NEXTCLOUD_DATA_DIR}
+
+    depends_on:
+      - db
+    environment:
+      - NEXTCLOUD_UPDATE=0
+      - NEXTCLOUD_DATA_DIR=${NEXTCLOUD_DATA_DIR}
+      - NEXTCLOUD_TRUSTED_DOMAINS=${NEXTCLOUD_TRUSTED_DOMAINS}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - PHP_MEMORY_LIMIT=1024M
+      - PHP_UPLOAD_LIMIT=4096M
+      - MYSQL_DB=${MYSQL_DB}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_HOST=db
+
+    networks:
+      default:
+
+  web:
+    image: nginx:latest
+    restart: always
+    volumes:
+      - ${CONFIGPATH}:/etc/nginx:ro
+      - ${SSLPATH}/${MAINDOMAIN}:/etc/ssl/private:ro
+      - ${LOGPATH}/access.log:/var/log/nginx/access.log
+      - ${LOGPATH}/error.log:/var/log/nginx/error.log
+    
+    depends_on:
+      - app
+    
+    mac_address: ${MAC}
+    networks:
+      default:
+      # Network name of the macvlan to use 
+      mexique_docker:
+        ipv4_address: ${PRIVATEIP}
+
+
+networks:
+  default:
+  mexique_docker:
+    # Tell the macvlan already created
+    external: true
+
+volumes:
+  www:
+  db_nextcloud:
+

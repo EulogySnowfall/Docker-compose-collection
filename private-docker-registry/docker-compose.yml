@@ -1,0 +1,27 @@
+version: '3.7'
+services:
+  backend:
+    image: 'registry:2'
+    ports:
+      - '5000:5000'
+    environment:
+      - REGISTRY_STORAGE_DELETE_ENABLED=true
+    volumes:
+      - ${MYREDISTRYPATH}:/var/lib/registry
+    networks:
+      - private-registery
+
+  frontend:
+    image: 'joxit/docker-registry-ui:static'
+    ports:
+      - '8090:80'
+    environment:
+      - 'REGISTRY_URL=http://docker-registry:5000'
+      - DELETE_IMAGES=true
+      - 'REGISTRY_TITLE=Eulogy Snowfall'
+    networks:
+      - private-registery
+
+networks:
+  private-registery:
+    name: private-registery

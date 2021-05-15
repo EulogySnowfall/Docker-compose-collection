@@ -1,0 +1,169 @@
+GET shakespeare/_search
+{
+  "query": {
+    "match_phrase": {
+      "text_entry": "to be or not to be"
+    }
+  }
+}
+
+# Type text can have analyser language
+# Text field can be analyse with score
+# keyword request the exact texte
+PUT movies
+{
+  "mappings": {
+    "properties": {
+      "id": {
+        "type": "integer"
+      },
+      "year": {
+        "type": "date"
+      },
+      "title": {
+        "type": "text",
+        "analyzer": "english"
+      },
+      "genre": {
+        "type": "keyword"
+      }
+    }
+  }
+}
+
+
+PUT series
+{
+  "mappings": {
+    "properties": {
+      "film_to_franchise": {
+        "type": "join",
+        "relations": {
+          "franchise": "film"
+        }
+      }
+    }
+  }
+}
+
+GET movies/_mapping
+{}
+
+
+POST movies/_doc/109488
+{
+  "genre": [
+    "Documentary",
+    "Comedy"
+  ],
+  "title": "mouvie Test wow",
+  "year": 2012
+}
+
+GET series/_search
+
+  
+
+# Update movie
+POST movies/_update/109488
+{
+  "doc": {
+    "title": "movie Test wow"
+  }
+}
+
+## curl brace delete the source doc
+GET movies/_doc/109487
+
+  
+
+
+## Delete a doc movie
+DELETE movies/_doc/109488
+{}
+
+# sort tous les star
+GET movies/_search
+{
+  "query": {
+    "match": {
+      "title": "Star Wars"
+    }
+    
+  }
+}
+
+GET movies/_search
+{
+  "query": {
+    "match_phrase": {
+      "title": "Star Trek"
+    }
+    
+  }
+}
+
+#Delete index
+DELETE movies
+
+
+#Work with join
+GET series/_search
+{
+  "query": {
+    "has_parent": {
+      "parent_type": "franchise",
+      "query": {
+        "match": {
+          "title": "Star Wars"
+        }
+      }
+    }
+  }
+  
+}
+
+GET series/_search
+{
+  "query": {
+    "has_child": {
+      "type": "film",
+      "query": {
+        "match": {
+          "title": "The Force Awakens"
+        }
+      }
+    }
+  }
+}
+
+# Will give a score to star in title
+GET movies/_search
+{
+  "query": {
+    "match": {
+      "title": "star"
+    }
+  }
+}
+
+# bool = and
+GET movies/_search
+{
+  "query": {
+    "bool": { 
+      "must": {
+        "term": {
+          "title": "trek"
+        }
+      },
+      "filter": {
+        "range": {
+          "year": {
+            "gte": 2010
+          }
+        }
+      }
+    }
+  }
+}

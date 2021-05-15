@@ -1,0 +1,38 @@
+version: '3.0'
+
+services:
+  freepbx:
+    container_name: freepbx
+    image: tiredofit/freepbx:latest
+    ports:
+      - '88:80'
+      - '4443:443'
+      - '4445:4445'
+      - '4569:4569'
+      - '5060:5060'
+      - '5160:5160'
+      - '8001:8001'
+      - '8003:8003'
+      - '8008:8008'
+      - '8009:8009'
+      - '18000-20000:18000-20000/udp'
+    environment:
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_EMBEDDED=true
+    volumes:
+      - certs:/certs
+      - web:/var/www/html
+      - data:/data
+      - database:/var/lib/mysql
+      - ${LOGPATH}:/var/log/
+      - custom:/assets/custom
+
+volumes:
+  data:
+  custom:
+  web:
+  database:
+  certs:
+    name: certs

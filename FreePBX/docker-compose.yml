@@ -1,0 +1,45 @@
+version: '3.0'
+
+services:
+  freepbx:
+    container_name: freepbx
+    image: tiredofit/freepbx:latest
+    environment:
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_EMBEDDED=true
+    volumes:
+      - certs:/certs
+      - web:/var/www/html
+      - data:/data
+      - database:/var/lib/mysql
+      - ${LOGPATH}:/var/log/
+      - custom:/assets/custom
+    restart: unless-stopped
+    mac_address: ${MAC}
+    networks:
+      # Network name of the macvlan to use 
+      mexique_docker:
+        ipv4_address: ${PRIVATEIP}
+
+volumes:
+  data:
+  custom:
+  web:
+  database:
+  certs:
+    name: certs
+
+networks:
+  mexique_docker:
+    # Tell the macvlan already created
+    external: true
+#     driver: macvlan
+#     driver_opts:
+#       parent: ${ETH}
+#     ipam:
+#       driver: default
+#       config:
+#         - subnet: ${NETWORK}
+#           gateway: ${GATEWAY}
