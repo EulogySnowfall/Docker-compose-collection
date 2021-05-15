@@ -40,9 +40,9 @@ use mysql;
 select host, user, password from mysql.user;
 ```
 
-
 ## Env File
 
+```
 DB_NAME=dbname
 DB_USER=dbuser
 DB_PASS=dbpassword
@@ -52,3 +52,4 @@ ETH=eth0
 NETWORK=192.168.10.0/24
 GATEWAY=192.168.10.1
 LOGPATH=/path/to/freepbx/log
+```

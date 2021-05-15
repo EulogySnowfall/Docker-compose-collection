@@ -4,7 +4,25 @@
 
 - app: is the container name
 
+```
 docker-compose exec -u www-data app php occ files:scan --all
+```
+
+## Fix memory limite bug version 21
+
+
+Add memory_limit in the commande line
+```bash 
+sudo -u www-data php -d memory_limit=1G occ user:resetpassword admin
+```
+
+## Desktop synch connexion problem
+
+in the config.php add the following line below the 'overwrite.cli.url'
+
+```php
+  'overwriteprotocol' => 'https',
+```
 
 
 ## .env Variables file
