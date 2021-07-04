@@ -152,6 +152,12 @@ tar -xzvf file.tar.gz /directory_to_copy
 docker rm backup_machine
 ```
 
+### Copy files to containers
+
+```bash
+docker cp foo.txt mycontainer:/foo.txt
+```
+
 ### backup BD (exemple)
 
 ```bash
