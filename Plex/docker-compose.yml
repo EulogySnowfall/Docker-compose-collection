@@ -6,9 +6,9 @@ services:
     image: "plexinc/pms-docker:${TAG}"
     restart: unless-stopped
     environment:
-      - TZ='America/Toronto'
-      - PLEX_CLAIM=claim-p8a7zZrBvP4ui6j4P4XM
-      - ADVERTISE_IP=http://home.guidetutoriel.com:32400/  
+      - TZ=${TZ}
+      - PLEX_CLAIM=${PLEX_CLAIM}
+      - ADVERTISE_IP=${ADVERTISE_IP} 
     volumes:
       - config:/config
       - transcode:/transcode
