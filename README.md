@@ -2,8 +2,7 @@
 
 Execute and play docker-compose files list.
 
-
-***Important***
+**_Important_**
 
 The Vscode docker-compose plugin (up/down) don't take in charge custom environnement variables.
 
@@ -21,27 +20,26 @@ Make sure to put your environnement variables in a .env in the same directory of
 Valide the config variables
 
 ```bash
-docker-compose config 
+docker-compose config
 ```
 
 If all look good then...
 
-First run to take in charge customs variables. 
+First run to take in charge customs variables.
 
 ```bash
 docker-compose up -d
 ```
 
-After you can restart from the Windows Docker Desktop or on windows boot, ***ever from vscode plugin... til is fix***.  
+After you can restart from the Windows Docker Desktop or on windows boot, **_ever from vscode plugin... til is fix_**.
 
-**
+\*\*
 
 Enjoy!
 
 Eulogy
 
-- Tested on a Windows Docker installation under WSL2 with Ubuntu 20.04. May works without any problem under Linux environnement.  
-
+- Tested on a Windows Docker installation under WSL2 with Ubuntu 20.04. May works without any problem under Linux environnement.
 
 ## Communs issues and Errors
 
@@ -60,20 +58,20 @@ mountFsTab = false
 
 Then restart your computer to restart WSL and Docker Desktop at the same time
 
-
 - Give good right to your folder (of all include linux host)
 
 If your are under Ubuntu base, normaly it's will be www-data www-data so in your data directory volume of your webapp do:
+
 ```
 chown -R www-data.www-data *
 ```
+
 or do the owner you need.
 You may need to create the user with the same UID on the host.
 
 ### Can't activate SSL
 
 Some files need to be on 400 or 600 right. Activate your volume as :ro can help you, otherwise apply the good chown on the files
-
 
 ### Can create Databases on de remote container on the apps
 
@@ -100,11 +98,9 @@ The docker volume look to bee limited to 250Go, maybe is the wsl limite attribut
 
 ## NextCloud
 
-
 ## Freepbx
 
 - Work fine for the MACVLAN version...
-
 
 ## Plex
 
@@ -120,7 +116,6 @@ You own Private Docker repository
 
 - With a Basic PHP Exemple. You just to put yours.
 
-
 ## Docker Basic
 
 Some Basic exemple utils command for docker as exemple.
@@ -128,7 +123,6 @@ Some Basic exemple utils command for docker as exemple.
 ### Console access
 
 docker exec -it [container-id] bash
-
 
 ### Backup Volume (exemple)
 
@@ -164,16 +158,17 @@ docker cp foo.txt mycontainer:/foo.txt
 sudo docker exec apps /usr/bin/mysqldump -u appsuser --password=userpassword apps > /mnt/data/apps.sql
 docker exec site_db_1  /usr/bin/mysqldump -u root --password=rootpassword site > /mnt/g/site.sql
 ```
+
 ### Restore BD (exemple)
 
-```bash 
+```bash
 cat /mnt/g/site.sql | docker exec -i site_db_1 /usr/bin/mysql -u root --password=rootpassword site
 ```
 
 ## Create macvlan network
 
 ```bash
-docker network create -d macvlan --subnet=192.168.0.0/24 --gateway=192.168.0.1  -o parent=enp27s0 pub_vlan
+docker network create -d macvlan --subnet=192.168.0.0/24 --gateway=192.168.0.1  -o parent=enp27s0 pub_vlan_name
 ```
 
 ### Networks macvlan on docker-compose
@@ -185,14 +180,13 @@ Put the container on a network who already existe (as above)
   mac_address: ${MAC}
 
   networks:
-  # Network name of the macvlan to use 
-    pub_vlan:
+  # Network name of the macvlan to use
+    pub_vlan_name:
       ipv4_address: ${PRIVATEIP}
 
 networks:
-  pub_vlan:
+  pub_vlan_name:
     # Tell the macvlan already created
     external: true
 
 ```
-
