@@ -190,3 +190,12 @@ networks:
     external: true
 
 ```
+
+### Certificat
+
+```bash
+certbot -d *.guidetutoriel.com --manual --preferred-challenges dns certonly
+cd /etc/letsencrypt/live/
+openssl pkcs12 -export -out certificate.pfx -inkey privkey.pem -in cert.pem -certfile chain.pem
+password *****
+```
