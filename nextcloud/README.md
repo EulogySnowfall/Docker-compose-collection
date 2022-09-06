@@ -16,7 +16,7 @@ Add memory_limit in the commande line
 sudo -u www-data php -d memory_limit=1G occ user:resetpassword admin
 ```
 
-## Desktop synch connexion problem
+## Desktop synch connexion problem  <--------------------------
 
 in the config.php add the following line below the 'overwrite.cli.url'
 

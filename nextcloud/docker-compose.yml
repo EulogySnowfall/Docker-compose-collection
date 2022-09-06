@@ -11,10 +11,10 @@ services:
     networks:
       default:
     environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_DB=${MYSQL_DB}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MARIADB_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MARIADB_DATABASE=${MYSQL_DB}
+      - MARIADB_USER=${MYSQL_USER}
+      - MARIADB_PASSWORD=${MYSQL_PASSWORD}
 
   app:
     image: nextcloud:latest
@@ -45,9 +45,8 @@ services:
     restart: always
     volumes:
       - ${CONFIGPATH}:/etc/nginx:ro
-      - ${SSLPATH}/${MAINDOMAIN}:/etc/ssl/private:ro
-      - ${LOGPATH}/access.log:/var/log/nginx/access.log
-      - ${LOGPATH}/error.log:/var/log/nginx/error.log
+      - ${SSLPATH}:/etc/ssl/private:ro
+      - ${LOGPATH}:/var/log/nginx
     
     depends_on:
       - app
