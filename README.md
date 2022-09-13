@@ -43,6 +43,11 @@ Eulogy
 
 ## Communs issues and Errors
 
+*** important ***
+
+Install With Docker CE, not with snap otherwise fwarmor will block the security of docker and docker-compose 
+
+
 ### Can't access files for a Web server with bind volumes
 
 You have 2 things to fix here (if you work with wsl under Windows drives mount as me)

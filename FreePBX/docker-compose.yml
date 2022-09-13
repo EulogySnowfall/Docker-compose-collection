@@ -10,12 +10,12 @@ services:
       - DB_PASS=${DB_PASS}
       - DB_EMBEDDED=true
     volumes:
-      - certs:/certs
+      - ${CERTPATH}:/certs
       - web:/var/www/html
-      - data:/data
+      - ${DATAPATH}:/data
       - database:/var/lib/mysql
       - ${LOGPATH}:/var/log/
-      - custom:/assets/custom
+      - ${CUSTOMPATH}:/assets/custom
     restart: unless-stopped
     mac_address: ${MAC}
     networks:
