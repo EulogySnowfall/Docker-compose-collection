@@ -16,7 +16,7 @@ services:
     mac_address: ${MAC}
     networks:
       # Network name of the macvlan to use 
-      mexique_docker:
+      mexique_bridge:
         ipv4_address: ${PRIVATEIP}
 
 volumes:
@@ -24,6 +24,6 @@ volumes:
   config:
 
 networks:
-  mexique_docker:
+  mexique_bridge:
     # Tell the macvlan already created
     external: true

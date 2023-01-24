@@ -55,13 +55,13 @@ services:
     networks:
       default:
       # Network name of the macvlan to use 
-      mexique_docker:
+      mexique_bridge:
         ipv4_address: ${PRIVATEIP}
 
 
 networks:
   default:
-  mexique_docker:
+  mexique_bridge:
     # Tell the macvlan already created
     external: true
 
