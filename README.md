@@ -208,3 +208,128 @@ password *****
 make file owner plex.plex with 400
 
 ```
+
+### Install Kubernetes Cluster on Ubuntu 22.04 (no Docker version)
+
+Based on <https://www.linuxtechi.com/install-kubernetes-on-ubuntu-22-04/>
+
+```bash
+
+# Name nodes
+
+sudo hostnamectl set-hostname "k8smaster.example.net"
+exec bash
+
+# On workers
+sudo hostnamectl set-hostname "k8sworker1.example.net"   // 1st worker node
+sudo hostnamectl set-hostname "k8sworker2.example.net"   // 2nd worker node
+exec bash
+
+# In all /etc/hosts
+192.168.1.173   k8smaster.example.net k8smaster
+192.168.1.174   k8sworker1.example.net k8sworker1
+192.168.1.175   k8sworker2.example.net k8sworker2
+
+
+# Disable swap & add kernel settings
+
+sudo swapoff -a
+sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+
+sudo tee /etc/modules-load.d/containerd.conf <<EOF
+overlay
+br_netfilter
+EOF
+
+sudo modprobe overlay
+sudo modprobe br_netfilter
+
+sudo tee /etc/sysctl.d/kubernetes.conf <<EOF
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+net.ipv4.ip_forward = 1
+EOF 
+
+sudo sysctl --system
+
+# Install containerd run time
+sudo apt install -y curl gnupg2 software-properties-common apt-transport-https ca-certificates
+
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/docker.gpg
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+sudo apt update
+sudo apt install -y containerd.io
+
+containerd config default | sudo tee /etc/containerd/config.toml >/dev/null 2>&1
+sudo sed -i 's/SystemdCgroup \= false/SystemdCgroup \= true/g' /etc/containerd/config.toml
+
+sudo systemctl restart containerd
+sudo systemctl enable containerd
+
+
+# Add apt repository for Kubernetes
+
+# New version without apt-key
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/rapture.gpg
+sudo apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+
+# Install Kubernetes components Kubectl, kubeadm & kubelet
+sudo apt update
+sudo apt install -y kubelet kubeadm kubectl
+sudo apt-mark hold kubelet kubeadm kubectl
+
+# Initialize Kubernetes cluster with Kubeadm command
+# Now, we are all set to initialize Kubernetes cluster. Run the following Kubeadm command from the master node only.
+sudo kubeadm init --control-plane-endpoint=k8smaster.example.net
+
+# start interacting with cluster, run following commands from the master node
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+
+# Test
+kubectl cluster-info
+kubectl get nodes
+
+
+# Joins nodes (from the texte exemple)
+sudo kubeadm join k8smaster.example.net:6443 --token vt4ua6.wcma2y8pl4menxh2 \
+   --discovery-token-ca-cert-hash sha256:0494aa7fc6ced8f8e7b20137ec0c5d2699dc5f8e616656932ff9173c94962a36
+
+# Install Calico Pod Network Add-on
+# Run following curl and kubectl command to install Calico network plugin from the master node
+
+curl https://projectcalico.docs.tigera.io/manifests/calico.yaml -O
+kubectl apply -f calico.yaml
+
+# Check the kube-system namespace
+kubectl get pods -n kube-system
+
+
+# Test Kubernetes Installation
+# try to deploy nginx based application and try to access it
+
+kubectl create deployment nginx-app --image=nginx --replicas=2
+
+# Check the status of nginx-app deployment
+kubectl get deployment nginx-app
+
+# Expose the deployment as NodePort
+kubectl expose deployment nginx-app --type=NodePort --port=80
+
+# Run following commands to view service status
+kubectl get svc nginx-app
+kubectl describe svc nginx-app
+
+
+# Check for the node port on the output 
+
+#NodePort:   <unset> 31246/TCP
+
+curl http://192.168.1.174:31246
+
+# and check the ouput if successed 
+
+```
