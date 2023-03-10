@@ -3,6 +3,7 @@
 **/logs/
 **/db-data/
 .env
+venv
 **/connector/
 coralogix-exemple/
 **/*.sql

@@ -43,7 +43,7 @@ Eulogy
 
 ## Communs issues and Errors
 
-*** important ***
+**_important_**
 
 Install With Docker CE, not with snap otherwise fwarmor will block the security of docker and docker-compose 
 
@@ -67,7 +67,7 @@ Then restart your computer to restart WSL and Docker Desktop at the same time
 
 If your are under Ubuntu base, normaly it's will be www-data www-data so in your data directory volume of your webapp do:
 
-```
+```bash
 chown -R www-data.www-data *
 ```
 
